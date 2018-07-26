@@ -30,7 +30,7 @@ router.get('/:user_id', function(req, res) {
 
 //Find by params
 router.get('/query/fields', function(req, res) {
-  User.find(req.query, function(err, usuario) {
+  User.find({ searchkey: {$regex: req.query, $options: "$i"}}, function(err, usuario) {
     if (err) {
       res.status(400).send(err);
     } else if (!usuario){
