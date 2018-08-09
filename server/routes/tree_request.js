@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var googleMapsClient = require('@google/maps').createClient({
-  key: 'AIzaSyBaMgfWN5qg0lNFV_iKyqlGFtM457-mB-E'
+  key: 'AIzaSyCD3lc3mKMhDg6SdOVATN5ZYyP9N2nfLaQ'
 });
 
 
