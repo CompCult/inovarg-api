@@ -56,7 +56,7 @@ router.post('/', async function(req, res) {
     Uploads.uploadFile(req.body.photo, req.body._user.toString(), timeStamp);
 
     var filename = req.body._user.toString() + timeStamp + '.jpg'; 
-    request.photo = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+    request.photo = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
   if(req.body.sidewalk_size) request.sidewalk_size    = req.body.sidewalk_size;
   if(req.body.answer_date) request.answer_date = new Date(req.body.answer_date);
@@ -175,7 +175,7 @@ router.put('/:tree_id', function(req, res) {
       var filename = req.body._user.toString() + timeStamp + '.jpg';    
       Uploads.uploadFile(req.body.photo, req.body._user.toString(), timeStamp);
 
-      request.photo = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+      request.photo = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
     }
     if (req.body.sidewalk_size) request.sidewalk_size   = req.body.sidewalk_size;
     if (req.body.street) request.street = req.body.street;

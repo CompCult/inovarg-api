@@ -73,7 +73,7 @@ router.post('/', function(req, res) {
     Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
     var filename = req.body._user.toString() + timeStamp + '.jpg'; 
-    post.picture = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+    post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
   if (req.body.audio) {
     var date = new Date();
@@ -81,7 +81,7 @@ router.post('/', function(req, res) {
     Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
     var filename = req.body._user.toString() + 'audio' + timeStamp + '.wav'; 
-    post.audio = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+    post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
   if (req.body.video) {
     var date = new Date();
@@ -89,7 +89,7 @@ router.post('/', function(req, res) {
     Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
     var filename = req.body._user.toString() + timeStamp + '.wav'; 
-    post.video = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+    post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
   }
 
   post.save(function(err) {
@@ -114,7 +114,7 @@ router.post('/update/:post_id', function(req, res) {
           Uploads.uploadFile(req.body.picture, req.body._user.toString(), timeStamp);
 
           var filename = req.body._user.toString() + timeStamp + '.jpg'; 
-          post.picture = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+          post.picture = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
         }
         if (req.body.audio) {
           var date = new Date();
@@ -122,7 +122,7 @@ router.post('/update/:post_id', function(req, res) {
           Uploads.uploadAudio(req.body.audio, req.body._user.toString(), timeStamp);
 
           var filename = req.body._user.toString() + timeStamp + '.wav'; 
-          post.audio = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+          post.audio = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
         }
         if (req.body.video) {
           var date = new Date();
@@ -130,7 +130,7 @@ router.post('/update/:post_id', function(req, res) {
           Uploads.uploadVideo(req.body.video, req.body._user.toString(), timeStamp);
 
           var filename = req.body._user.toString() + timeStamp + '.wav'; 
-          post.video = 'https://s3.amazonaws.com/compcult/minhaarvore/' + filename;
+          post.video = 'https://s3.amazonaws.com/compcult/' + process.env.S3_FOLDER + filename;
         }
         if (req.body.location_lat) post.location_lat = req.body.location_lat;
         if (req.body.location_lng) post.location_lng = req.body.location_lng;

@@ -10,7 +10,7 @@ var s3 =  new AWS.S3({
 class Uploads {
   static async uploadFile(file, _user, stamp){
     var buffer = new Buffer(file, 'base64');
-    var filename = 'minhaarvore/' + _user + stamp + '.jpg';
+    var filename = process.env.S3_FOLDER + _user + stamp + '.jpg';
 
     var params = {
         Bucket: 'compcult',
@@ -27,7 +27,7 @@ class Uploads {
 
   static async uploadAudio(file, _user, stamp){
     var buffer = new Buffer(file, 'base64');
-    var filename = 'minhaarvore/' + _user + stamp + '.wav';
+    var filename = process.env.S3_FOLDER + _user + stamp + '.wav';
 
     var params = {
         Bucket: 'compcult',
@@ -46,7 +46,7 @@ class Uploads {
 
   static async uploadVideo(file, _user, stamp){
     var buffer = new Buffer(file, 'base64');
-    var filename = 'minhaarvore/' + _user + stamp + '.mp4';
+    var filename = process.env.S3_FOLDER + _user + stamp + '.mp4';
 
     var params = {
         Bucket: 'compcult',
