@@ -1,8 +1,9 @@
-var bcrypt  = require('bcryptjs');
+const bcrypt  = require('bcryptjs');
+const _ = require('lodash')
 
-var User = require('../models/user.js');
-var Uploads = require('../upload.js');
-var Mailer = require('../mailer.js');
+const User = require('../models/user.js');
+const Uploads = require('../upload.js');
+const Mailer = require('../mailer.js');
 
 function _listUsers (req, res) {
   User.find({}, function(err, usuarios) {
@@ -25,7 +26,9 @@ function _findUserById (req, res) {
 }
 
 function _findUserByParams (req, res) {
-  User.find(req.query, function(err, usuario) {
+  const pagination = _paginate(req.query.page, req.query.limit)
+  const query = _.omit(req.query, ['page', 'limit'])
+  User.find(query, null, pagination, function(err, usuario) {
     if (err) {
       res.status(400).send(err);
     } else if (!usuario){
@@ -232,6 +235,19 @@ function _userIsBanned (date) {
   }
 
   return false;  
+}
+
+function _paginate (page, limit) {
+  limit = Number(limit) || 0
+  page = Number(page) || 0
+  if (limit && page) {
+    page = (page - 1) * limit
+  }
+  
+  return {
+    limit: limit,
+    skip: page
+  }
 }
 
 module.exports = {
