@@ -28,7 +28,9 @@ function _findUserById (req, res) {
 function _findUserByParams (req, res) {
   const pagination = _paginate(req.query.page, req.query.limit)
   const query = _.omit(req.query, ['page', 'limit'])
-  User.find(query, null, pagination, function(err, usuario) {
+  const regexQuery = _regexQuery(query, ['name'])
+  
+  User.find(regexQuery, null, pagination, function(err, usuario) {
     if (err) {
       res.status(400).send(err);
     } else if (!usuario){
@@ -248,6 +250,15 @@ function _paginate (page, limit) {
     limit: limit,
     skip: page
   }
+}
+
+function _regexQuery (query, regProps) {
+  const regexQuery = _.omit(query, regProps)
+  regProps.forEach(prop => {
+    regexQuery[prop] = { $regex: new RegExp(query[prop]), $options: 'i' }
+  })
+
+  return regexQuery
 }
 
 module.exports = {
