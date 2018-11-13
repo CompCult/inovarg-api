@@ -253,12 +253,11 @@ function _paginate (page, limit) {
 }
 
 function _regexQuery (query, regProps) {
-  const regexQuery = _.omit(query, regProps)
   regProps.forEach(prop => {
-    regexQuery[prop] = { $regex: new RegExp(query[prop]), $options: 'i' }
+    query[prop] = { $regex: new RegExp(query[prop]), $options: 'i' }
   })
 
-  return regexQuery
+  return query
 }
 
 module.exports = {
