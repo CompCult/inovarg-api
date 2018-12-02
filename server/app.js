@@ -9,13 +9,15 @@ var hash = require('bcrypt-nodejs');
 var path = require('path');
 var cors = require('cors');
 var aws = require('aws-sdk');
+const config = require('config');
 
 
 // mongoose local
 //mongoose.connect('mongodb://localhost/mean-auth');
 // mongoose 
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGO_PATH);
+mongoose.connect(config.get('db'))
+  .then(() => console.log(`Connected to ${config.get('db')}`));
 
 //Get the default connection
 var db = mongoose.connection;
