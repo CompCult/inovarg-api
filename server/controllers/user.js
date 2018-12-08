@@ -28,6 +28,8 @@ function findUserById (req, res) {
   User.findById(req.params.user_id, function(err, usuario) {
     if (err) {
       res.status(400).send(err);
+    } else if (!usuario){
+      res.status(404).send("Usuário não encontrado");
     } else {
       res.status(200).json(usuario);
     }
