@@ -6,14 +6,22 @@ const Uploads = require('../upload.js');
 const Mailer = require('../mailer.js');
 const utils = require('../utils.js');
 
-function listUsers (req, res) {
-  User.find({}, function(err, usuarios) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(usuarios);
+async function listUsers (req, res) {
+  const query = _.omit(req.query, ['page', 'limit'])
+  const regexProperties = ['name']
+  const regexQuery = utils.regexQuery(query, regexProperties) 
+
+  if (req.query.page) {
+    const config = {
+      page: Number(req.query.page),
+      limit: Number(req.query.limit)
     }
-  });
+    const users = await User.paginate(regexQuery, config)
+    res.send(users)
+  } else {
+    const users = await User.find(regexQuery)
+    res.send(users)
+  }
 }
 
 function findUserById (req, res) {
@@ -24,19 +32,6 @@ function findUserById (req, res) {
       res.status(200).json(usuario);
     }
   });
-}
-
-async function findUserByParams (req, res) {
-  const query = _.omit(req.query, ['page', 'limit'])
-  const regexQuery = utils.regexQuery(query, ['name']) 
-  const config = {
-    page: Number(req.query.page) || 0,
-    limit: Number(req.query.limit) || 0
-  }
-
-  const users = await User.paginate(regexQuery, config)
-  
-  res.send(users)
 }
 
 function createUser (req, res) {
@@ -240,7 +235,6 @@ function _userIsBanned (date) {
 module.exports = {
   listUsers,
   findUserById,
-  findUserByParams,
   createUser,
   updatePassword,
   recoveryPassword,

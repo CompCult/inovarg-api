@@ -1,7 +1,8 @@
 {
   "name": "mean-auth",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
   },
   "dependencies": {
     "@google/maps": "^0.4.6",

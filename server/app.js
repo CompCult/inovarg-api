@@ -87,12 +87,9 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-app.use(function(err, req, res) {
-  res.status(err.status || 500);
-  res.end(JSON.stringify({
-    message: err.message,
-    error: {}
-  }));
+app.use((err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).send({ 'message': err.message });
 });
 
 module.exports = app;
