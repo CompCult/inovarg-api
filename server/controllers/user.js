@@ -9,9 +9,11 @@ const utils = require('../utils.js');
 async function listUsers (req, res) {
   const query = _.omit(req.query, ['page', 'limit'])
   const regexProperties = ['name']
-  const regexQuery = utils.regexQuery(query, regexProperties) 
+  const regexQuery = utils.regexQuery(query, regexProperties)
 
   if (req.query.page) {
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit')
+    
     const config = {
       page: Number(req.query.page),
       limit: Number(req.query.limit)
