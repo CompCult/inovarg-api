@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const tryCatch = require('../middlewares/tryCatch')
 
 const userController = require('../controllers/user')
 
@@ -13,7 +14,7 @@ const userController = require('../controllers/user')
  * @apiExample {curl} Exemplo de uso
  * curl http://127.0.0.1:3000/users
  */
-router.get('/', userController.listUsers);
+router.get('/', tryCatch(userController.listUsers));
 
 /**
  * @api {get} /users/:user_id  02. Recuperar usuário pelo id
@@ -37,7 +38,7 @@ router.get('/:user_id', userController.findUserById);
  * @apiExample {curl} Exemplo de uso
  * curl http://127.0.0.1:3000/users/query/fields?institution="UFCG"
  */
-router.get('/query/fields', userController.findUserByParams);
+router.get('/query/fields', userController.listUsers);
 
 /**
  * @api {post} /users/register 04. Criar usuário

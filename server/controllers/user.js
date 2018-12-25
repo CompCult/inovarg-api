@@ -6,32 +6,28 @@ const Uploads = require('../upload.js');
 const Mailer = require('../mailer.js');
 const utils = require('../utils.js');
 
-function _listUsers (req, res) {
-  User.find({}, function(err, usuarios) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(usuarios);
-    }
-  });
-}
-
-function _findUserById (req, res) {
-  User.findById(req.params.user_id, function(err, usuario) {
-    if (err) {
-      res.status(400).send(err);
-    } else {
-      res.status(200).json(usuario);
-    }
-  });
-}
-
-function _findUserByParams (req, res) {
-  const pagination = utils.paginate(req.query.page, req.query.limit)
+async function listUsers (req, res) {
   const query = _.omit(req.query, ['page', 'limit'])
-  const regexQuery = utils.regexQuery(query, ['name'])
-  
-  User.find(regexQuery, null, pagination, function(err, usuario) {
+  const regexProperties = ['name']
+  const regexQuery = utils.regexQuery(query, regexProperties)
+
+  if (req.query.page) {
+    if (!req.query.limit) res.status(400).send('A page parameter was passed without limit')
+    
+    const config = {
+      page: Number(req.query.page),
+      limit: Number(req.query.limit)
+    }
+    const users = await User.paginate(regexQuery, config)
+    res.send(users)
+  } else {
+    const users = await User.find(regexQuery)
+    res.send(users)
+  }
+}
+
+function findUserById (req, res) {
+  User.findById(req.params.user_id, function(err, usuario) {
     if (err) {
       res.status(400).send(err);
     } else if (!usuario){
@@ -42,7 +38,7 @@ function _findUserByParams (req, res) {
   });
 }
 
-function _createUser (req, res) {
+function createUser (req, res) {
   var user      = new User();
   user.name     = req.body.name;
   user.email    = req.body.email;
@@ -70,7 +66,7 @@ function _createUser (req, res) {
   });
 }
 
-function _updatePassword (req, res) {
+function updatePassword (req, res) {
   User.findOne({ email: req.query.email}, function(err, user) {
     if (err) {
       res.status(400).send(err);
@@ -95,7 +91,7 @@ function _updatePassword (req, res) {
   });
 }
 
-function _recoveryPassword (req, res) {
+function recoveryPassword (req, res) {
   let user_email = req.body.email;
   let new_password = req.body.new_password;
   let html = "<div style='width:90%; margin-left:auto; margin-right:auto; margin-bottom: 20px; border: 1px solid transparent; border-radius: 4px;'>" +
@@ -135,7 +131,7 @@ function _recoveryPassword (req, res) {
   }); 
 }
 
-function _updateUser (req, res) {
+function updateUser (req, res) {
   User.findById(req.params.user_id, function(err, user) {
     if (!user) {
       res.status(400).send('Usuário não encontrado!');
@@ -196,7 +192,7 @@ function _updateUser (req, res) {
   });
 }
 
-function _authenticate (req, res) {
+function authenticate (req, res) {
   User.findOne({'email': req.body.email}, function(error, user) {
     if (!user) {
       res.status(404).send('Usuário não encontrado.');
@@ -219,7 +215,7 @@ function _authenticate (req, res) {
   });
 }
 
-function _deleteUser (req, res) {
+function deleteUser (req, res) {
   User.remove({ _id: req.params.user_id }, function(err) {
     if (err) {
       res.status(400).send(err);
@@ -241,13 +237,12 @@ function _userIsBanned (date) {
 }
 
 module.exports = {
-  listUsers: _listUsers,
-  findUserById: _findUserById,
-  findUserByParams: _findUserByParams,
-  createUser: _createUser,
-  updatePassword: _updatePassword,
-  recoveryPassword: _recoveryPassword,
-  updateUser: _updateUser,
-  authenticate: _authenticate,
-  deleteUser: _deleteUser
+  listUsers,
+  findUserById,
+  createUser,
+  updatePassword,
+  recoveryPassword,
+  updateUser,
+  authenticate,
+  deleteUser
 }

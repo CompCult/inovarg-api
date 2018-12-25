@@ -1,5 +1,6 @@
 // user model
 var mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate');
 var Schema = mongoose.Schema;
 var autoInc   = require('mongoose-sequence')(mongoose);
 
@@ -56,4 +57,5 @@ var User = new Schema({
 });
 
 User.plugin(autoInc, {id: "user_id"});
+User.plugin(mongoosePaginate);
 module.exports = mongoose.model('users', User);
