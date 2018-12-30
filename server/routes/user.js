@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const tryCatch = require('../middlewares/tryCatch')
+const validate = require('../middlewares/validate');
+const { validateUser } = require('../models/user');
+const awaitHandler = require('../middlewares/awaitHandler');
 
 const userController = require('../controllers/user')
 
@@ -14,7 +16,7 @@ const userController = require('../controllers/user')
  * @apiExample {curl} Exemplo de uso
  * curl http://127.0.0.1:3000/users
  */
-router.get('/', tryCatch(userController.listUsers));
+router.get('/', awaitHandler(userController.listUsers));
 
 /**
  * @api {get} /users/:user_id  02. Recuperar usuário pelo id
@@ -47,7 +49,7 @@ router.get('/query/fields', userController.listUsers);
  * @apiDescription
  * Cria um novo usuário.
  */
-router.post('/register', userController.createUser);
+router.post('/register', validate(validateUser), awaitHandler(userController.createUser));
 
 /**
  * @api {post} /users/recovery/password_edit 10. Aplicar nova senha
