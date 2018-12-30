@@ -66,7 +66,7 @@ function validateUser (user) {
     name: Joi.string().required(),
     email: Joi.string().required(),
     password: Joi.string().required(),
-    type: Joi.required()
+    type: Joi.string().required()
   };
 
   return Joi.validate(user, schema);

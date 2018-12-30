@@ -141,7 +141,7 @@ describe('/users', () => {
     });
     
     it('should return 400 if type is not provided', async () => {
-      delete user.type;
+      user.type = '';
       const res = await exec();
 
       expect(res.status).toBe(400);
