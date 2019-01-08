@@ -3,7 +3,6 @@ var router = express.Router();
 
 var Quiz = require('../models/quiz.js');
 var QuizAnswer = require('../models/quiz_answer.js');
-const tryCatch = require('../middlewares/tryCatch');
 
 //Index
 router.get('/', function(req, res) {

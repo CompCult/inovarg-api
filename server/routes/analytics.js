@@ -10,12 +10,12 @@ router.get('/quiz/:quizId', tryCatch(async (req, res) => {
     .aggregate([
       { $match: { _quiz: Number(req.params.quizId) } },
       { $group: { _id: '$answer', amount: { $sum: 1 }} }
-    ])
+    ]);
 
   const data = ['a', 'b', 'c', 'd', 'e'].map(alternative => { 
     const alt = alternativesAmount.find(alt => alt._id === alternative);
     if (alt) return alt.amount;
-    else return 0
+    else return 0;
   });
 
   res.send([{ data }]);
