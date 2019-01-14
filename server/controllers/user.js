@@ -1,7 +1,7 @@
 const bcrypt  = require('bcryptjs');
 const _ = require('lodash');
 
-const User = require('../models/user.js');
+const { User, validateUser } = require('../models/user.js');
 const Uploads = require('../upload.js');
 const Mailer = require('../mailer.js');
 const utils = require('../utils.js');
@@ -38,32 +38,20 @@ function findUserById (req, res) {
   });
 }
 
-function createUser (req, res) {
-  var user      = new User();
-  user.name     = req.body.name;
-  user.email    = req.body.email;
-  user.type     = req.body.type;
+async function createUser (req, res, next) {
+  req.body.password = await bcrypt.hash(req.body.password, 10);
+  const user = new User(req.body);
 
-  bcrypt.hash(req.body.password, 10, function(err, hash) {
-    if (err) {
-      res.status(400).send(err);
+  try {
+    await user.save();
+    res.status(200).send(_.omit(user.toJSON(), 'password'));
+  } catch (err) {
+    if (err.name === 'MongoError' && err.code === 11000) {
+      return res.status(400).send('Usuário já existente.');
     } else {
-      user.password = hash;
-      user.save(function(err) {
-        if (err) {
-          if (err.name === 'MongoError' && err.code === 11000) {
-                // Duplicate username
-                console.log(err);
-                return res.status(400).send('Usuário já existente.');
-              }
-              // Some other error
-              return res.status(400).send(err);
-        } else {
-          res.status(200).send(user);
-        }
-      });
+      next(err);
     }
-  });
+  }
 }
 
 function updatePassword (req, res) {

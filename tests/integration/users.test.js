@@ -1,5 +1,6 @@
 const request = require('supertest');
-const User = require('../../server/models/user');
+const { User } = require('../../server/models/user');
+const bcrypt  = require('bcryptjs');
 
 describe('/users', () => {
   let server;
@@ -12,7 +13,7 @@ describe('/users', () => {
     await User.remove({});
   });
 
-  describe('GET /', () => {
+  describe('GET /users', () => {
     beforeEach(async () => {
       await User.insertMany([
         { name: 'user1', email: 'email1', type: 'type', password: 'pass1' },
@@ -32,7 +33,7 @@ describe('/users', () => {
 
     it('should return users who match the incomplete name parameter', async () => {
       const res = await request(server)
-        .get(`/users`)
+        .get('/users')
         .query({ name: 'user' });
 
       expect(res.status).toBe(200);
@@ -43,7 +44,7 @@ describe('/users', () => {
     it(`should return users according to the quantity and 
         page specified by the parameters limit and page`, async () => {
       const res = await request(server)
-        .get(`/users`)
+        .get('/users')
         .query({ limit: 1, page: 1 });
 
       expect(res.status).toBe(200);
@@ -83,4 +84,74 @@ describe('/users', () => {
       expect(res.status).toBe(404);
     });
   });
-})
+
+  describe('POST /users/register', () => {
+    let user;
+
+    beforeEach(() => {
+      user = {
+        name: 'user',
+        email: 'email',
+        type: 'type',
+        password: 'pass'
+      };
+    })
+
+    const exec = () => {
+      return request(server)
+        .post('/users/register')
+        .send(user);
+    }
+
+    it('should save the user and encrypt the password if user is valid', async () => {
+      await exec();
+      const res = await User.findOne({ email: 'email' })
+
+      expect(res).not.toBeNull();
+      expect(res.password.length).toBe(60);
+    });
+
+    it('should return the user with omited password if it is valid', async () => {
+      const res = await exec();
+
+      expect(res.status).toBe(200);
+      expect(res.body).toHaveProperty('email', user.email);
+      expect(res.body).not.toHaveProperty('password');
+    });
+
+    it('should return 400 if user already exists', async () => {
+      await User.insertMany([ user ]);
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if name is not provided', async () => {
+      user.name = '';
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if email is not provided', async () => {
+      user.email = '';
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+    
+    it('should return 400 if type is not provided', async () => {
+      user.type = '';
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if password is not provided', async () => {
+      user.password = '';
+      const res = await exec();
+
+      expect(res.status).toBe(400);
+    });
+  });
+});

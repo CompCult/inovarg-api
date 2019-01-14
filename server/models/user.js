@@ -1,10 +1,10 @@
 // user model
-var mongoose = require('mongoose');
-var mongoosePaginate = require('mongoose-paginate');
-var Schema = mongoose.Schema;
-var autoInc   = require('mongoose-sequence')(mongoose);
+const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
+const autoInc = require('mongoose-sequence')(mongoose);
+const Joi = require('joi');
 
-var User = new Schema({
+const userSchema = new mongoose.Schema({
   _id: Number,
   name: {
     type: String,
@@ -56,6 +56,20 @@ var User = new Schema({
   }
 });
 
-User.plugin(autoInc, {id: "user_id"});
-User.plugin(mongoosePaginate);
-module.exports = mongoose.model('users', User);
+userSchema.plugin(autoInc, {id: "user_id"});
+userSchema.plugin(mongoosePaginate);
+
+const User = mongoose.model('users', userSchema);
+
+function validateUser (user) {
+  const schema = {
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    password: Joi.string().required(),
+    type: Joi.string().required()
+  };
+
+  return Joi.validate(user, schema);
+};
+
+module.exports = { User, validateUser };
