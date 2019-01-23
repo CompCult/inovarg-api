@@ -1,3 +1,4 @@
 {
-    "db": "mongodb://localhost/inovarg"
+    "db": "mongodb://localhost/inovarg",
+    "accountVerificationURL": "http://127.0.0.1:3000"
 }

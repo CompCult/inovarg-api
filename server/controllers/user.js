@@ -1,5 +1,6 @@
 const bcrypt  = require('bcryptjs');
 const _ = require('lodash');
+const config = require('config');
 
 const { User, validateUser } = require('../models/user.js');
 const Uploads = require('../upload.js');
@@ -42,9 +43,24 @@ async function createUser (req, res, next) {
   req.body.password = await bcrypt.hash(req.body.password, 10);
   const user = new User(req.body);
 
+  const emailBody =
+   `<div style='font-family: Arial; padding: 1rem 3rem; box-shadow: 2px 2px 10px #bbb; color: #444'>
+      <p style="margin-bottom: 1.4rem;">Olá ${user.name},<p>
+      <p style="line-height: 24px;">Sua conta está quase pronta! <br/>
+      Clique no botão abaixo para confimar seu cadastro:</p>
+      <form style="margin: 2rem 0;" 
+        action='${config.get('accountVerificationURL')}?accountVerificationCode=${user.accountVerificationCode}'>
+        <input type='submit' value='Confirmar cadastro'
+          style='background: #502274; padding: .9rem; color: white; font-size: 1rem; border: none; cursor: pointer'>
+      </form>
+      <p style="line-height: 24px; color: #502274; font-family: monospace; font-size: 1rem;">
+        Bom uso, <br/> Equipe Minha Árvore!</p>
+    </div>`
+
   try {
     await user.save();
-    res.status(200).send(_.omit(user.toJSON(), 'password'));
+    Mailer.sendMail(user.email, 'Ativação da conta', emailBody);
+    res.status(200).send(_.omit(user.toJSON(), ['password', 'accountVerificationCode']));
   } catch (err) {
     if (err.name === 'MongoError' && err.code === 11000) {
       return res.status(400).send('Usuário já existente.');
@@ -53,6 +69,15 @@ async function createUser (req, res, next) {
     }
   }
 }
+
+async function verifyAccount (req, res) {
+  const user = await User.findOneAndUpdate({ accountVerificationCode: req.body.accountVerificationCode },
+    { verifiedAccount: true }, { new: true });
+
+  if (!user) res.status(400).send('Código inválido');
+
+  res.send(user)
+} 
 
 function updatePassword (req, res) {
   User.findOne({ email: req.query.email}, function(err, user) {
@@ -228,6 +253,7 @@ module.exports = {
   listUsers,
   findUserById,
   createUser,
+  verifyAccount,
   updatePassword,
   recoveryPassword,
   updateUser,

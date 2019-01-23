@@ -53,6 +53,14 @@ const userSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     default: Date.now
+  },
+  verifiedAccount: {
+    type: Boolean,
+    default: false
+  },
+  accountVerificationCode: {
+    type: String,
+    default: generateRandomCode
   }
 });
 
@@ -71,5 +79,15 @@ function validateUser (user) {
 
   return Joi.validate(user, schema);
 };
+
+function generateRandomCode () {
+  const codeSize = 10;
+  const minLimit = 65;
+  const maxLimit = 90;
+  
+  return Array.from(new Array(codeSize), () => {
+    return String.fromCharCode(Math.random() * (maxLimit - minLimit) + minLimit);
+  }).join('');
+}
 
 module.exports = { User, validateUser };
