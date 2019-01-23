@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
 var Quiz = require('../models/quiz.js');
 var QuizAnswer = require('../models/quiz_answer.js');
 
