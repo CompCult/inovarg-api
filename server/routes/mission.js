@@ -117,6 +117,7 @@ router.post('/', function(req, res) {
   mission.has_text         = req.body.has_text;
   mission.has_geolocation  = req.body.has_geolocation;
   mission.end_message      = req.body.end_message;
+  mission.bookmarks        = req.body.bookmarks;
 
   let start_time = new Date(req.body.start_time);
   let end_time = new Date(req.body.end_time);

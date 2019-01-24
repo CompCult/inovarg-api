@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoInc   = require('mongoose-sequence')(mongoose);
 
+const bookmarkSchema = require('./bookmark');
+
 var Mission = new Schema({
   _id: Number,
   name: String,
@@ -32,7 +34,8 @@ var Mission = new Schema({
   created_at: {
     type: Date,
     default: Date.now
-  }
+  },
+  bookmarks: [bookmarkSchema]
 });
 
 Mission.plugin(autoInc, {id: "mission_id"});
