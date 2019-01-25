@@ -44,14 +44,15 @@ async function createUser (req, res, next) {
   const user = new User(req.body);
 
   const emailBody =
-   `<div style='font-family: Arial; padding: 1rem 3rem; box-shadow: 2px 2px 10px #bbb; color: #444'>
+   `<div style="font-family: Arial; padding: 1rem 3rem; box-shadow: 2px 2px 10px #bbb; color: #444">
       <p style="margin-bottom: 1.4rem;">Olá ${user.name},<p>
       <p style="line-height: 24px;">Sua conta está quase pronta! <br/>
       Clique no botão abaixo para confimar seu cadastro:</p>
       <form style="margin: 2rem 0;" 
-        action='${config.get('accountVerificationURL')}?accountVerificationCode=${user.accountVerificationCode}'>
-        <input type='submit' value='Confirmar cadastro'
-          style='background: #502274; padding: .9rem; color: white; font-size: 1rem; border: none; cursor: pointer'>
+        action="${config.get('accountVerificationURL')}">
+        <input type="hidden" name="code" value=${user.accountVerificationCode} />
+        <input type="submit" value="Confirmar cadastro"
+          style="background: #502274; padding: .9rem; color: white; font-size: 1rem; border: none; cursor: pointer">
       </form>
       <p style="line-height: 24px; color: #502274; font-family: monospace; font-size: 1rem;">
         Bom uso, <br/> Equipe Minha Árvore!</p>
@@ -71,12 +72,15 @@ async function createUser (req, res, next) {
 }
 
 async function verifyAccount (req, res) {
-  const user = await User.findOneAndUpdate({ accountVerificationCode: req.body.accountVerificationCode },
-    { verifiedAccount: true }, { new: true });
+  const user = await User.findOneAndUpdate(
+    { accountVerificationCode: req.body.code },
+    { verifiedAccount: true },
+    { new: true }
+  );
 
   if (!user) res.status(400).send('Código inválido');
 
-  res.send(user)
+  res.send(user);
 } 
 
 function updatePassword (req, res) {

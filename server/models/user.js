@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 const autoInc = require('mongoose-sequence')(mongoose);
 const Joi = require('joi');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   _id: Number,
@@ -60,7 +61,7 @@ const userSchema = new mongoose.Schema({
   },
   accountVerificationCode: {
     type: String,
-    default: generateRandomCode
+    default: crypto.randomBytes(16).toString('hex')
   }
 });
 
@@ -79,15 +80,5 @@ function validateUser (user) {
 
   return Joi.validate(user, schema);
 };
-
-function generateRandomCode () {
-  const codeSize = 10;
-  const minLimit = 65;
-  const maxLimit = 90;
-  
-  return Array.from(new Array(codeSize), () => {
-    return String.fromCharCode(Math.random() * (maxLimit - minLimit) + minLimit);
-  }).join('');
-}
 
 module.exports = { User, validateUser };

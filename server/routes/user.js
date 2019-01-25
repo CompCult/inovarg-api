@@ -58,7 +58,7 @@ router.post('/register', validate(validateUser), awaitHandler(userController.cre
  * @apiDescription
  * Altera o status de ativação da conta para true.
  */
-router.post('/account-verification', awaitHandler(userController.verifyAccount));
+router.put('/account-verification', awaitHandler(userController.verifyAccount));
 
 /**
  * @api {post} /users/recovery/password_edit 10. Aplicar nova senha
