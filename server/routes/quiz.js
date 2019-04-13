@@ -107,6 +107,7 @@ router.post('/', function(req, res) {
   quiz.alternative_a   = req.body.alternative_a;
   quiz.alternative_b   = req.body.alternative_b;
   quiz.correct_answer  = req.body.correct_answer;
+  quiz.bookmarks       = req.body.bookmarks;
 
   let start_time = new Date(req.body.start_time);
   let end_time = new Date(req.body.end_time);

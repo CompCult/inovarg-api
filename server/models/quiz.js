@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var autoInc   = require('mongoose-sequence')(mongoose);
 
+const bookmarkSchema = require('./bookmark');
+
 var Quiz = new Schema({
   _id: Number,
   _user: { 
@@ -33,7 +35,8 @@ var Quiz = new Schema({
   created_at: {
     type: Date,
     default: Date.now
-  }
+  },
+  bookmarks: [bookmarkSchema]
 });
 
 Quiz.plugin(autoInc, {id: "quiz_id"});
