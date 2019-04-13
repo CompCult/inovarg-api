@@ -52,6 +52,15 @@ router.get('/query/fields', userController.listUsers);
 router.post('/register', validate(validateUser), awaitHandler(userController.createUser));
 
 /**
+ * @api {post} /users/account-verification 04. Criar usuário
+ * @apiGroup Users
+ * 
+ * @apiDescription
+ * Altera o status de ativação da conta para true.
+ */
+router.put('/account-verification', awaitHandler(userController.verifyAccount));
+
+/**
  * @api {post} /users/recovery/password_edit 10. Aplicar nova senha
  * @apiGroup Users
  * 

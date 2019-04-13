@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
 const autoInc = require('mongoose-sequence')(mongoose);
 const Joi = require('joi');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   _id: Number,
@@ -53,6 +54,14 @@ const userSchema = new mongoose.Schema({
   created_at: {
     type: Date,
     default: Date.now
+  },
+  verifiedAccount: {
+    type: Boolean,
+    default: false
+  },
+  accountVerificationCode: {
+    type: String,
+    default: crypto.randomBytes(16).toString('hex')
   }
 });
 
