@@ -37,6 +37,7 @@ app.use(bodyParser.urlencoded({
     limit: '100mb'
 }));
 app.use(cors());
+app.options('*', cors());
 
 //-------------------------------------------------------------------------
 app.get('/', function(req, res) {
