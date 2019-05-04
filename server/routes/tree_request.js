@@ -10,7 +10,7 @@ var Uploads = require('../upload.js');
 var TreeRequest = require('../models/mytree_exclusives/tree_request.js');
 var TreeType = require('../models/mytree_exclusives/tree_type.js');
 var Tree = require('../models/mytree_exclusives/tree.js');
-var User = require('../models/user.js');
+var { User } = require('../models/user.js');
 
 //Index
 router.get('/', function(req, res) {
